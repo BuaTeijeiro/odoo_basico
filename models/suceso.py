@@ -1,7 +1,7 @@
 from odoo import models, fields, api
 
 
-class informacion(models.Model):
+class suceso(models.Model):
     _name = 'odoo_basico.suceso'
     _description = 'Módulo básico para practicar más cosas'
 
