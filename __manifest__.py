@@ -2,7 +2,7 @@
 {
     'name': "odoo_basico",
 
-    'summary': "Short (1 phrase/line) summary of the module's purpose",
+    'summary': "Odoo para probar cosas",
 
     'description': """
 Long description of module's purpose
@@ -23,6 +23,7 @@ Long description of module's purpose
     # always loaded
     'data': [
         'views/informacion.xml',
+        'views/suceso.xml',
         'views/menu.xml',
         'views/templates.xml',
         'security/ir.model.access.csv',
