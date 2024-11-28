@@ -27,15 +27,25 @@
                 </page>
                 <page string="Datos Numéricos">
                   <group>
-                    <field name="alto_en_cms"/>
-                    <field name="ancho_en_cms"/>
-                    <field name="longo_en_cms"/>
-                    <field name="peso"/>
+                    <group>
+                      <field name="alto_en_cms"/>
+                      <field name="ancho_en_cms"/>
+                      <field name="longo_en_cms"/>
+                      <field name="literal" readonly="1"/>
+                    </group>
+                    <group>
+                      <field name="peso"/>
+                      <field name="volume"/>
+                      <field name="densidade"/>
+                    </group>
                   </group>
                 </page>
                 <page string="Datos">
                   <group>
-
+                   <field name="foto" widget="image" class="oe_avatar"/>
+                   <field name="foto" widget="image"/>
+                   <field name="adxunto_nome" invisible="1"/>
+                   <field name="adxunto" filename="adxunto_nome"/>
                   </group>
                 </page>
               </notebook>
@@ -58,6 +68,8 @@
           <field name="ancho_en_cms"/>
           <field name="longo_en_cms"/>
           <field name="peso"/>
+          <field name="volume"/>
+          <field name="densidade"/>
         </list>
       </field>
     </record>
