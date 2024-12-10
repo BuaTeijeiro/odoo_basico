@@ -60,7 +60,7 @@
             <field name="ancho_en_cms">4</field>
             <field name="peso">4</field>
         </record>
-        <record model="odoo_basico.informacion" id="odoo_basicoinformacion1">
+        <record model="odoo_basico.informacion" id="odoo_basicoinformacion7">
             <field name="name">Rexistro 7</field>
             <field name="descripcion">Descripción Rexistro 7</field>
             <field name="autorizado">True</field>
