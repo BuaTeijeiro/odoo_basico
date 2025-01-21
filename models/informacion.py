@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from unittest.mock import sentinel
 
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
@@ -23,6 +24,16 @@ class informacion(models.Model):
     foto = fields.Binary(string='Foto')
     adxunto_nome = fields.Char(string="Nome Adxunto")
     adxunto = fields.Binary(string="Arquivo adxunto")
+
+    # Os campos Many2one crean un campo na BD
+    moeda_id = fields.Many2one('res.currency', domain="[('position','=','after')]")
+    moeda_euro_id = fields.Many2one('res.currency', default=lambda self: self.env['res.currency'].search([('name', '=', "EUR")], limit=1))
+    # con domain, filtramos os valores mostrados. Pode ser mediante unha constante (vai entre comillas) ou unha variable
+    gasto_en_euros = fields.Monetary(string="Gasto en euros", currency_field="moeda_euro_id")
+    moeda_dolar_id = fields.Many2one('res.currency',default=lambda self: self.env['res.currency'].search([('name', '=', "USD")], limit=1))
+    gasto_en_dolares = fields.Monetary(string="Gasto en dolares", currency_field="moeda_dolar_id")
+    moeda_koruna_id = fields.Many2one('res.currency',default=lambda self: self.env['res.currency'].search([('name', '=', "CZK")], limit=1))
+    gasto_en_koruny = fields.Monetary(string="Gasto en korunas", currency_field="moeda_koruna_id")
 
     _sql_constraints = [('nomeUnico', 'unique(name)', 'Non se pode repetir o nome')]
     _order = "volume asc"
