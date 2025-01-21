@@ -50,15 +50,19 @@
                 </page>
                 <page string="Moedas">
                   <group>
-                    <field name="moeda_id"/>
-                  </group>
-                  <group>
-                    <field name="moeda_euro_id" invisible="1"/>
-                    <field name="gasto_en_euros"/>
-                    <field name="moeda_dolar_id" invisible="1"/>
-                    <field name="gasto_en_dolares"/>
-                    <field name="moeda_koruna_id" invisible="1"/>
-                    <field name="gasto_en_koruny"/>
+                    <group>
+                      <field name="moeda_id"/>
+                      <field name="moeda_en_texto"/>
+                      <field name="creador_da_moeda"/>
+                    </group>
+                    <group>
+                      <field name="moeda_euro_id" invisible="1"/>
+                      <field name="gasto_en_euros"/>
+                      <field name="moeda_dolar_id" invisible="1"/>
+                      <field name="gasto_en_dolares"/>
+                      <field name="moeda_koruna_id" invisible="1"/>
+                      <field name="gasto_en_koruny"/>
+                    </group>
                   </group>
                 </page>
               </notebook>

@@ -3,6 +3,7 @@ from unittest.mock import sentinel
 
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
+from reportlab.lib.pdfencrypt import computeO
 
 
 class informacion(models.Model):
@@ -27,13 +28,16 @@ class informacion(models.Model):
 
     # Os campos Many2one crean un campo na BD
     moeda_id = fields.Many2one('res.currency', domain="[('position','=','after')]")
-    moeda_euro_id = fields.Many2one('res.currency', default=lambda self: self.env['res.currency'].search([('name', '=', "EUR")], limit=1))
     # con domain, filtramos os valores mostrados. Pode ser mediante unha constante (vai entre comillas) ou unha variable
+    moeda_en_texto = fields.Char(related="moeda_id.currency_unit_label", string="Moeda en formato texto")
+    creador_da_moeda = fields.Char(related="moeda_id.create_uid.login", string="Usuario creador da moeda", store=True)
+
+    moeda_euro_id = fields.Many2one('res.currency', default=lambda self: self.env['res.currency'].search([('name', '=', "EUR")], limit=1))
     gasto_en_euros = fields.Monetary(string="Gasto en euros", currency_field="moeda_euro_id")
     moeda_dolar_id = fields.Many2one('res.currency',default=lambda self: self.env['res.currency'].search([('name', '=', "USD")], limit=1))
     gasto_en_dolares = fields.Monetary(string="Gasto en dolares", currency_field="moeda_dolar_id")
     moeda_koruna_id = fields.Many2one('res.currency',default=lambda self: self.env['res.currency'].search([('name', '=', "CZK")], limit=1))
-    gasto_en_koruny = fields.Monetary(string="Gasto en korunas", currency_field="moeda_koruna_id")
+    gasto_en_koruny = fields.Monetary(string="Gasto en korunas", currency_field="moeda_koruna_id", compute = "_koruna")
 
     _sql_constraints = [('nomeUnico', 'unique(name)', 'Non se pode repetir o nome')]
     _order = "volume asc"
@@ -42,6 +46,11 @@ class informacion(models.Model):
     def _volume(self):
         for rexistro in self:
             rexistro.volume = float(rexistro.alto_en_cms) * float(rexistro.longo_en_cms) * float(rexistro.ancho_en_cms) / 1000000
+
+    @api.depends('gasto_en_euros')
+    def _koruna(self):
+        for rexistro in self:
+            rexistro.gasto_en_koruny = float(rexistro.gasto_en_euros) * 25
 
     @api.depends('peso','volume')
     def _densidade(self):
