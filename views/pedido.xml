@@ -14,6 +14,11 @@
       <field name="model">odoo_basico.pedido</field>
       <field name="arch" type="xml">
         <form string="Formulario Ola Mundo">
+          <header>
+            <button name="actualizadorSexo" type="object" string="Actualiza o campo Sexo do modelo información"/>
+            <button name="creaRexistroInformacion" type="object" string="Crea un rexistro de información"/>
+            <button name="actualizaRexistroInformacion" type="object" string="Modifica un rexistro de información"/>
+          </header>
           <group>
             <field name="fecha"/>
             <field name="name"/>
