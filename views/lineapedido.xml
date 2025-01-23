@@ -1,26 +1,44 @@
 <odoo>
   <data>
-    <record model="ir.actions.act_window" id="suceso_list_action">
+    <record model="ir.actions.act_window" id="lineapedido_list_action">
       <field name="name">Info</field>
-      <field name="res_model">odoo_basico.suceso</field>
-      <field name="view_mode">list</field>
+      <field name="res_model">odoo_basico.lineapedido</field>
+      <field name="view_mode">list,form</field>
       <field name="help" type="html">
         <p class="o_view_nocontent_smiling_face">Tes que crear o primeiro rexistro</p>
       </field>
     </record>
 
-    <record model="ir.ui.view" id="odoo_basico_suceso_view_list">
-      <field name="name">suceso.list</field>
-      <field name="model">odoo_basico.suceso</field>
+    <record model="ir.ui.view" id="odoo_basico_view_lineapedido_form">
+      <field name="name">lineapedido.form</field>
+      <field name="model">odoo_basico.lineapedido</field>
       <field name="arch" type="xml">
-        <list string="suceso Tree" editable ="top" decoration-success="nivel == 'Baixo'" decoration-warning="nivel == 'Medio'" decoration-danger="nivel == 'Alto'">
-          <field name="name"/>
+        <form string="Formulario Pedido">
+          <group>
+            <field name="nome"/>
+            <field name="descripcion"/>
+            <field name="unidades"/>
+            <field name="informacion_ids"/>
+            <field name="pedido_id" invisible="1"/>
+          </group>
+        </form>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="odoo_basico_view_lineapedido_list">
+      <field name="name">lineapedido.list</field>
+      <field name="model">odoo_basico.lineapedido</field>
+      <field name="arch" type="xml">
+        <list>
+          <field name="nome"/>
           <field name="descripcion"/>
-          <field name="nivel"/>
-          <field name="data_hora"/>
+          <field name="unidades"/>
         </list>
       </field>
     </record>
+
+
+
 
     <!-- explicit list view definition -->
 <!--

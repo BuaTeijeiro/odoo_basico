@@ -9,7 +9,7 @@
       </field>
     </record>
 
-    <record model="ir.ui.view" id="odoo_basico_view_form">
+    <record model="ir.ui.view" id="odoo_basico_view_informacion_form">
       <field name="name">informacion.form</field>
       <field name="model">odoo_basico.informacion</field>
       <field name="arch" type="xml">
@@ -72,7 +72,7 @@
       </field>
     </record>
 
-    <record model="ir.ui.view" id="odoo_basico_view_list">
+    <record model="ir.ui.view" id="odoo_basico_view_informacion_list">
       <field name="name">informacion.list</field>
       <field name="model">odoo_basico.informacion</field>
       <field name="arch" type="xml">
