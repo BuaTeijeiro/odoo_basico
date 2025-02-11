@@ -1,7 +1,7 @@
-<Odoo>
+<odoo>
     <record id="paperformat_euro_portrait" model="report.paperformat">
         <field name="name">European A4 Portrait</field>
-        <field name="default" eval="True" />
+        <field name="default" eval="True"/>
         <field name="format">A4</field>
         <field name="page_height">0</field>
         <field name="page_width">0</field>
@@ -10,13 +10,13 @@
         <field name="margin_bottom">23</field>
         <field name="margin_left">15</field>
         <field name="margin_right">15</field>
-        <field name="header_line" eval="True" />
+        <field name="header_line" eval="True"/>
         <field name="header_spacing">35</field>
         <field name="dpi">90</field>
     </record>
     <record id="paperformat_euro_landscape" model="report.paperformat">
         <field name="name">European A4 Landscape</field>
-        <field name="default" eval="True" />
+        <field name="default" eval="True"/>
         <field name="format">A4</field>
         <field name="page_height">0</field>
         <field name="page_width">0</field>
@@ -25,18 +25,86 @@
         <field name="margin_bottom">23</field>
         <field name="margin_left">7</field>
         <field name="margin_right">7</field>
-        <field name="header_line" eval="True" />
+        <field name="header_line" eval="True"/>
         <field name="header_spacing">35</field>
         <field name="dpi">90</field>
     </record>
-    <report id="action_report_informacion"
-        string="Listaxe de Información"
-        model="odoo_basico.informacion" report_type="qweb-pdf"
-        name="odoo_basico.report_informacion_template"
-        paperformat="paperformat_euro_portrait"
-/>
+
+
+    <!--    <record id="action_report_informacion"-->
+    <!--        string="Listaxe de Información"-->
+    <!--        model="odoo_basico.informacion" report_type="qweb-pdf"-->
+    <!--        name="odoo_basico.report_informacion_template"-->
+    <!--        paperformat="paperformat_euro_portrait"/>-->
+
     <template id="report_informacion_template">
-        <t t-call="web.html_container"/>
-        <t t-call="web.external_layout"/>
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="page">
+                    <div class="container">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr class="bg-primary">
+                                    <th class="text-left">Titulo</th>
+                                    <th class="text-left">Peso</th>
+                                    <th class="text-left">Autorizado</th>
+                                    <th class="text-left">Sexo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-set="suma_peso" t-value="0"/>
+                                <t t-foreach="docs" t-as="o">
+                                    <tr>
+                                        <td class="text-left">
+                                               <h5><span t-field="o.name" /></h5>
+                                        </td>
+                                        <td class="text-left">
+                                               <h5><span t-field="o.peso" /></h5>
+                                            <t t-if="o.peso &gt; 3">
+                                                <t t-set="suma_peso" t-value="suma_peso + o.peso"/>
+                                            </t>
+                                        </td>
+                                        <td class="text-left">
+                                            <t t-if="o.autorizado == True">
+                                                <span>Sí</span>
+                                            </t>
+                                            <t t-else="">
+                                                <span>Non</span>
+                                            </t>
+                                        </td>
+                                        <td class="text-left">
+                                               <h5><span t-field="o.sexo_traducido" /></h5>
+                                        </td>
+                                    </tr>
+                                </t>
+                                <td class="text-left">
+                                    <span>Suma de pesos maior a 3</span>
+                                </td>
+                                <td class="text-left">
+                                    <span t-esc="suma_peso"/>
+                                </td>
+                                <td class="text-left">
+                                    <span>Suma de pesos total</span>
+                                </td>
+                                <td class="text-left">
+                                    <span t-esc="sum([x.peso for x in docs])"/>
+                                </td>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </t>
+        </t>
     </template>
-</Odoo>
+    <record id="report_1_odoo_basico_informacion" model="ir.actions.report">
+        <field name="name">Listaxe 1 de Información</field>
+        <field name="model">odoo_basico.informacion</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">odoo_basico.report_informacion_template</field>
+        <field name="report_file">odoo_basico.report_informacion_template</field>
+        <field name="print_report_name">'Registration Event - %s' % (object.name or 'Attendee').replace('/','')</field>
+        <field name="paperformat_id" ref="paperformat_euro_portrait"/>
+        <field name="binding_model_id" ref="model_odoo_basico_informacion"/>
+        <field name="binding_type">report</field>
+    </record>
+</odoo>
