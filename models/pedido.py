@@ -12,8 +12,10 @@ class pedido(models.Model):
 
     fecha = fields.Date(string="Fecha de pedido")
     name = fields.Char(string="codigo de pedido")
-    cliente = fields.Many2one('res.partner', required=True)
+    cliente = fields.Many2one('res.partner', ondelete="cascade", required=True)
     lineapedido_ids = fields.One2many('odoo_basico.lineapedido', 'pedido_id')
+    persoa_id = fields.Many2one('res.partner', ondelete='set null', domain="[('visible','=','True')]", index=True,
+                                string="Persoa")
 
     def actualizadorSexo(self):
         informacion_ids = self.env['odoo_basico.informacion'].search([('autorizado', '=', False)])

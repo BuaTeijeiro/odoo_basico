@@ -18,7 +18,7 @@ Long description of module's purpose
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base','mail'],
+    'depends': ['base','account','mail'],
 
     # always loaded
     'data': [
@@ -28,8 +28,10 @@ Long description of module's purpose
         'views/lineapedido.xml',
         'views/menu.xml',
         'views/templates.xml',
+        'views/persoa.xml',
         'security/ir.model.access.csv',
         'reports/report_informacion.xml',
+        'reports/report_entrega.xml',
         'reports/report_headers.xml'
     ],
     # only loaded in demonstration mode

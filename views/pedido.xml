@@ -23,6 +23,7 @@
             <field name="fecha"/>
             <field name="name"/>
             <field name="cliente"/>
+            <field name="persoa_id"/>
 
             <separator string="Visualizar e engadir"/>
             <field name="lineapedido_ids"/>
