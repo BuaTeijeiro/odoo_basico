@@ -15,13 +15,25 @@ class persoa (models.Model):
    # Temos que dar permisos en ir.model.access.csv para o model res_partner.
    # Engadir a liña:
 
-   def name_get(self):  # sobrescribimos o método name_get da clase res.partner
-        # Por defecto o campo display_name é company, name
-        # O metodo name_get actualiza o campo display_name(que é un computed) de res.partner
-        resultado = []
-        for rexistro in self:
-            if rexistro.apelidos:
-                resultado.append((rexistro.id, str(rexistro.name) + " " + str(rexistro.apelidos)))
-            else:
-                resultado.append((rexistro.id, str(rexistro.name)))
-        return resultado
+    #Método para antes de odoo 17
+   # def name_get(self):  # sobrescribimos o método name_get da clase res.partner
+   #      # Por defecto o campo display_name é company, name
+   #      # O metodo name_get actualiza o campo display_name(que é un computed) de res.partner
+   #      resultado = []
+   #      for rexistro in self:
+   #          if rexistro.apelidos:
+   #              resultado.append((rexistro.id, str(rexistro.name) + " " + str(rexistro.apelidos)))
+   #          else:
+   #              resultado.append((rexistro.id, str(rexistro.name)))
+   #      return resultado
+
+
+   @property
+   def display_name(self):
+       resultado = []
+       for rexistro in self:
+           if rexistro.apelidos:
+               resultado = f"{rexistro.apelidos} {rexistro.name}"
+           else:
+               resultado = rexistro.name
+       return resultado

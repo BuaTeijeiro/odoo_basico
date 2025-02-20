@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
-from unittest.mock import sentinel
-
+import os
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
-from reportlab.lib.pdfencrypt import computeO
+import pytz
+import locale
+import platform
+
+from . import miñasUtilidades
 
 
 class informacion(models.Model):
@@ -38,6 +41,18 @@ class informacion(models.Model):
     gasto_en_dolares = fields.Monetary(string="Gasto en dolares", currency_field="moeda_dolar_id")
     moeda_koruna_id = fields.Many2one('res.currency',default=lambda self: self.env['res.currency'].search([('name', '=', "CZK")], limit=1))
     gasto_en_koruny = fields.Monetary(string="Gasto en korunas", currency_field="moeda_koruna_id", compute = "_koruna")
+    data = fields.Date(string="Data", default=lambda self: fields.Date.today())
+    data_hora = fields.Datetime(string="Data e Hora", default=lambda self: fields.Datetime.now())
+    hora_utc = fields.Char(compute="_actualiza_hora_utc", string="Hora UTC", size=15, store=True)
+    hora_timezone_usuario = fields.Char(compute="actualiza_hora_timezone_usuario", string="Hora Timezone do Usuario", size=15, store=True)
+    mes_castelan = fields.Char(compute="_mes_castelan", string="Mes Castellano", store=True)
+    mes_galego = fields.Char(compute="_mes_galego", string="Mes Galego", store=True)
+    mes_checo = fields.Char(compute="_mes_checo", string="Mes Checo", store=True)
+    mes_chino = fields.Char(compute="_mes_chino", string="Mes Chino", store=True)
+    mes_coreano = fields.Char(compute="_mes_coreano", string="Mes Coreano", store=True)
+    mes_xapones = fields.Char(compute="_mes_xapones", string="Mes Xaponés", store=True)
+    mes_rumano= fields.Char(compute="_mes_rumano", string="Mes Rumano", store=True)
+    mes_hungaro = fields.Char(compute="_mes_hungaro", string="Mes Hungaro", store=True)
 
     _sql_constraints = [('nomeUnico', 'unique(name)', 'Non se pode repetir o nome')]
     _order = "volume asc"
@@ -94,3 +109,107 @@ class informacion(models.Model):
         mail_id = self.env['mail.mail'].create(mail_valores)
         mail_id.sudo().send()
         return True
+
+    def ver_contexto(self):  # Este método é chamado dende un botón de informacion.xml
+            for rexistro in self:
+                # Ao usar warning temos que importar a libreria mediante from odoo.exceptions import Warning
+                # Importamos tamén a libreria os mediante import os
+                # raise Warning(
+                #     'Contexto: %s Ruta: %s Contido %s' % (rexistro.env.context, os.getcwd(), os.listdir(os.getcwd())))
+
+                raise ValidationError('Contexto: %s Ruta: %s Contido %s' % (rexistro.env.context, os.getcwd(), os.listdir(os.getcwd())))
+                # env.context é un diccionario  https://www.w3schools.com/python/python_dictionaries.asp
+            return True
+
+    @api.depends('data_hora')
+    def _actualiza_hora_utc(self):
+        for rexistro in self:  # A hora se almacena na BD en horario UTC (2 horas menos no verán, 1 hora menos no inverno)
+            rexistro.hora_utc = rexistro.data_hora.strftime("%H:%M:%S")
+
+    @api.depends('data_hora')
+    def actualiza_hora_timezone_usuario(
+            self):  # Non pode ser un metodo privado porque da erro ao ser chamado dende o boton na vista xml        # "_actualiza_hora_timezone_usuario en odoo_basico.informacion es privado y no se puede activar con un botón"
+        for rexistro in self:
+            rexistro.chamado_dende_pedido_e_dende_apidepends(rexistro)
+
+    def chamado_dende_pedido_e_dende_apidepends(self,
+                                                parametro_cos_datos_a_actualizar):  # Ten 2 parametros xa que polo segundo recibe os rexistros que queremos actualizar dende pedido
+        # TypeError: informacion.actualiza_hora_timezone_usuario() takes 1 positional argument but 2 were given
+        #     parametro_cos_datos_a_actualizar.hora_timezone_usuario = self.convirte_data_hora_de_utc_a_timezone_do_usuario(parametro_cos_datos_a_actualizar.data_hora).strftime("%H:%M:%S")  # Convertimos a hora de UTC a hora do timezone do usuario
+        for rexistro in parametro_cos_datos_a_actualizar:
+            rexistro.hora_timezone_usuario = rexistro.convirte_data_hora_de_utc_a_timezone_do_usuario(
+                rexistro.data_hora).strftime("%H:%M:%S")  # Convertimos a hora de UTC a hora do timezone do usuario
+
+    def convirte_data_hora_de_utc_a_timezone_do_usuario(self,
+                                                        data_hora_utc_object):  # recibe a data hora en formato object
+        usuario_timezone = pytz.timezone(
+            self.env.user.tz or 'UTC')  # obter a zona horaria do usuario. Ollo!!! nas preferencias do usuario ten que estar ben configurada a zona horaria
+        return pytz.UTC.localize(data_hora_utc_object).astimezone(
+            usuario_timezone)  # hora co horario do usuario en formato object
+        # para usar  pytz temos que facer  import pytz
+
+
+    @api.depends('data')
+    def _mes_castelan(self):
+        # O idioma por defecto é o configurado en locale na máquina onde se executa odoo.
+        # Podemos cambialo con locale.setlocale, os idiomas teñen que estar instalados na máquina onde se executa odoo.
+        # Lista onde podemos ver os distintos valores: https://docs.moodle.org/dev/Table_of_locales#Table
+        # Definimos en miñasUtilidades un método para asignar o distinto literal que ten o idioma en función da plataforma Windows ou GNULinux
+        locale.setlocale(locale.LC_TIME, miñasUtilidades.cadeaTextoSegunPlataforma('Spanish_Spain.1252', 'es_ES.utf8'))
+        for rexistro in self:
+            rexistro.mes_castelan = rexistro.data.strftime("%B")  # strftime https://strftime.org/
+
+    @api.depends('data')
+    def _mes_galego(self):
+        locale.setlocale(locale.LC_TIME, miñasUtilidades.cadeaTextoSegunPlataforma('Galician_Spain.1252', 'gl_ES.utf8'))
+        for rexistro in self:
+            rexistro.mes_galego = rexistro.data.strftime("%B")
+        locale.setlocale(locale.LC_TIME, miñasUtilidades.cadeaTextoSegunPlataforma('Spanish_Spain.1252', 'es_ES.utf8'))
+
+    @api.depends('data')
+    def _mes_checo(self):
+        locale.setlocale(locale.LC_TIME, miñasUtilidades.cadeaTextoSegunPlataforma('Czech_Czech Republic.1250', 'cs_CZ.UTF-8'))
+        for rexistro in self:
+            rexistro.mes_checo = rexistro.data.strftime("%B")
+        locale.setlocale(locale.LC_TIME, miñasUtilidades.cadeaTextoSegunPlataforma('Spanish_Spain.1252', 'es_ES.utf8'))
+
+    @api.depends('data')
+    def _mes_chino(self):
+        locale.setlocale(locale.LC_TIME,
+                         miñasUtilidades.cadeaTextoSegunPlataforma('Chinese_China.936', 'zh_CN.UTF-8'))
+        for rexistro in self:
+            rexistro.mes_chino = rexistro.data.strftime("%B")
+        locale.setlocale(locale.LC_TIME, miñasUtilidades.cadeaTextoSegunPlataforma('Spanish_Spain.1252', 'es_ES.utf8'))
+
+
+    @api.depends('data')
+    def _mes_coreano(self):
+        locale.setlocale(locale.LC_TIME,
+                         miñasUtilidades.cadeaTextoSegunPlataforma('Korean_Korea.949', 'ko_KR.UTF-8'))
+        for rexistro in self:
+            rexistro.mes_coreano = rexistro.data.strftime("%B")
+        locale.setlocale(locale.LC_TIME, miñasUtilidades.cadeaTextoSegunPlataforma('Spanish_Spain.1252', 'es_ES.utf8'))
+
+    @api.depends('data')
+    def _mes_xapones(self):
+        locale.setlocale(locale.LC_TIME,
+                         miñasUtilidades.cadeaTextoSegunPlataforma('Japanese_Japan.932', 'ja_JP.UTF-8'))
+        for rexistro in self:
+            rexistro.mes_xapones = rexistro.data.strftime("%B")
+        locale.setlocale(locale.LC_TIME, miñasUtilidades.cadeaTextoSegunPlataforma('Spanish_Spain.1252', 'es_ES.utf8'))
+
+    @api.depends('data')
+    def _mes_rumano(self):
+        locale.setlocale(locale.LC_TIME,
+                         miñasUtilidades.cadeaTextoSegunPlataforma('Romanian_Romania.1250', 'ro_RO.UTF-8'))
+        for rexistro in self:
+            rexistro.mes_rumano = rexistro.data.strftime("%B")
+        locale.setlocale(locale.LC_TIME, miñasUtilidades.cadeaTextoSegunPlataforma('Spanish_Spain.1252', 'es_ES.utf8'))
+
+    @api.depends('data')
+    def _mes_hungaro(self):
+        locale.setlocale(locale.LC_TIME,
+                         miñasUtilidades.cadeaTextoSegunPlataforma('Hungarian_Hungary.1250', 'hu_HU.UTF-8'))
+        for rexistro in self:
+            rexistro.mes_hungaro = rexistro.data.strftime("%B")
+        locale.setlocale(locale.LC_TIME, miñasUtilidades.cadeaTextoSegunPlataforma('Spanish_Spain.1252', 'es_ES.utf8'))
