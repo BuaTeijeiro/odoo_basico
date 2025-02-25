@@ -1,3 +1,3 @@
 # -*- coding: utf-8 -*-
 
-from . import informacion, suceso, pedido, linea_pedido, persoa, miñasUtilidades
+from . import informacion, suceso, pedido, linea_pedido, persoa, miñasUtilidades, accion_planificada

@@ -1,4 +1,4 @@
-from odoo import models, fields
+from odoo import models, fields, api
 
 
 class persoa (models.Model):
@@ -28,12 +28,10 @@ class persoa (models.Model):
    #      return resultado
 
 
-   @property
-   def display_name(self):
-       resultado = []
-       for rexistro in self:
-           if rexistro.apelidos:
-               resultado = f"{rexistro.apelidos} {rexistro.name}"
+   @api.depends('apelidos','name')
+   def _compute_display_name(self):
+       for record in self:
+           if record.apelidos:
+               record.display_name = f"{record.apelidos} {record.name}"
            else:
-               resultado = rexistro.name
-       return resultado
+               record.display_name = record.name

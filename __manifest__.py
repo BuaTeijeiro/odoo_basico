@@ -32,7 +32,8 @@ Long description of module's purpose
         'security/ir.model.access.csv',
         'reports/report_informacion.xml',
         'reports/report_entrega.xml',
-        'reports/report_headers.xml'
+        'reports/report_headers.xml',
+        'accions_planificadas/accions_planificadas.xml',
     ],
     # only loaded in demonstration mode
     'demo': [
