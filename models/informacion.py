@@ -64,6 +64,13 @@ class informacion(models.Model):
     def _volume(self):
         for rexistro in self:
             rexistro.volume = float(rexistro.alto_en_cms) * float(rexistro.longo_en_cms) * float(rexistro.ancho_en_cms) / 1000000
+            miñasUtilidades.rexistra_log(
+                self.convirte_data_hora_de_utc_a_timezone_do_usuario(fields.Datetime.now()).strftime(
+                    "%Y/%m/%d, %H:%M:%S"),
+                miñasUtilidades.cadeaTextoSegunPlataforma('c:\\users\\a23davidbt\\logs', '/home/a23davidbt/logs'),
+                "probaVolume.log",
+                miñasUtilidades.determinaUsuarioSegunContexto(self, rexistro.env.context) + " novo volume " + str(
+                    rexistro.volume))
 
     @api.depends('gasto_en_euros')
     def _koruna(self):
