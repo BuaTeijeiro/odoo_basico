@@ -29,6 +29,7 @@ Long description of module's purpose
         'views/menu.xml',
         'views/templates.xml',
         'views/persoa.xml',
+        'security/xestion_usuarios.xml',
         'security/ir.model.access.csv',
         'reports/report_informacion.xml',
         'reports/report_entrega.xml',
